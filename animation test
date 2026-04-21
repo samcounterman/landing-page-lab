@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Managerial Insights</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f0f4f8;
+  --card: #ffffff;
+  --ink: #0f1f35;
+  --muted: #7a8a9e;
+  --border: #eaecf2;
+  --accent: #1a6fb5;
+  --green: #0d9e7e;
+  --red: #e8425a;
+  --amber: #f5a623;
+  --teal: #4ecdc4;
+  --sans: 'Inter', sans-serif;
+  --serif: 'Playfair Display', serif;
+}
+
+body {
+  background: var(--bg);
+  font-family: var(--sans);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.page {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 4rem;
+  align-items: center;
+  max-width: 1060px;
+  width: 100%;
+}
+
+/* ── COPY ── */
+.copy-label {
+  font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 0.9rem;
+}
+.copy-title {
+  font-family: var(--serif);
+  font-size: 2.4rem; font-weight: 700;
+  color: var(--ink); line-height: 1.2;
+  margin-bottom: 0.9rem;
+}
+.copy-sub {
+  font-size: 0.88rem; font-weight: 600;
+  color: var(--ink); margin-bottom: 0.9rem; line-height: 1.5;
+}
+.copy-body {
+  font-size: 0.85rem; color: var(--muted);
+  line-height: 1.8; margin-bottom: 1.4rem;
+}
+.copy-link {
+  font-size: 0.85rem; color: var(--accent);
+  text-decoration: none; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  transition: gap 0.2s;
+}
+.copy-link:hover { gap: 0.6rem; }
+
+/* ── DASHBOARD ── */
+.dashboard {
+  display: flex; flex-direction: column; gap: 10px;
+  animation: fadeUp 0.7s ease both;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── CARD BASE ── */
+.card {
+  background: var(--card);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 14px rgba(0,0,0,0.06);
+  padding: 14px 16px;
+}
+
+/* ── FLOAT ANIMATIONS ── */
+.float-a { animation: fA 5.0s ease-in-out infinite; }
+.float-b { animation: fB 4.6s ease-in-out infinite 0.4s; }
+.float-c { animation: fC 5.4s ease-in-out infinite 0.8s; }
+.float-d { animation: fD 4.8s ease-in-out infinite 1.2s; }
+.float-e { animation: fE 5.2s ease-in-out infinite 0.2s; }
+
+@keyframes fA { 0%,100%{transform:translateY(0)}   50%{transform:translateY(-5px)} }
+@keyframes fB { 0%,100%{transform:translateY(0)}   50%{transform:translateY(-6px)} }
+@keyframes fC { 0%,100%{transform:translateY(0)}   50%{transform:translateY(-4px)} }
+@keyframes fD { 0%,100%{transform:translateY(0)}   50%{transform:translateY(-7px)} }
+@keyframes fE { 0%,100%{transform:translateY(0)}   50%{transform:translateY(-5px)} }
+
+/* ── LIVE DOT ── */
+.live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green); display: inline-block;
+  position: relative; flex-shrink: 0;
+}
+.live-dot::after {
+  content: ''; position: absolute; inset: -3px;
+  border-radius: 50%; border: 2px solid var(--green);
+  animation: ping 1.5s ease-out infinite;
+}
+@keyframes ping {
+  0%   { transform:scale(1); opacity:0.8; }
+  100% { transform:scale(2.2); opacity:0; }
+}
+
+/* ── AGENT TABLE ── */
+.card-header {
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 10px;
+}
+.card-path  { font-size: 0.58rem; color: var(--muted); margin-bottom: 2px; }
+.card-title { font-size: 0.82rem; font-weight: 600; color: var(--ink); display:flex; align-items:center; gap:5px; }
+
+.agent-table { width: 100%; border-collapse: collapse; }
+.agent-table th {
+  font-size: 0.58rem; color: var(--muted); font-weight: 500;
+  text-align: left; padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.agent-table td {
+  font-size: 0.72rem; color: var(--ink);
+  padding: 6px 6px; border-bottom: 1px solid #f5f6fa;
+  vertical-align: middle; transition: background 0.35s;
+}
+.agent-table tr:last-child td { border-bottom: none; }
+.agent-table tr.hl td { background: #eef6ff; }
+
+.badge {
+  display: inline-block; font-size: 0.58rem; font-weight: 600;
+  padding: 2px 8px; border-radius: 20px; white-space: nowrap;
+  transition: background 0.3s, color 0.3s;
+}
+.b-call     { background:#dbeeff; color:var(--accent); }
+.b-ready    { background:#e6f7f3; color:var(--green); }
+.b-notready { background:#fdeaea; color:var(--red); }
+.b-acw      { background:#fff4e0; color:var(--amber); }
+
+/* ── METRICS ROW ── */
+.metrics-row {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;
+}
+
+.metric-label { font-size: 0.6rem; color: var(--muted); margin-bottom: 6px; line-height:1.3; }
+.metric-val   { font-size: 1.85rem; font-weight: 700; line-height: 1; margin-bottom: 3px; }
+.metric-sub   { font-size: 0.62rem; color: var(--muted); font-weight: 500; }
+.metric-delta { font-size: 0.62rem; margin-top: 5px; display:flex; align-items:center; gap:3px; }
+
+/* Ring */
+.ring-card { text-align:center; }
+.ring-wrap {
+  position: relative; width: 72px; height: 72px; margin: 4px auto 6px;
+}
+.ring-wrap svg { transform: rotate(-90deg); }
+.ring-track { fill:none; stroke:#eaecf2; stroke-width:7; }
+.ring-blue {
+  fill:none; stroke:var(--accent); stroke-width:7; stroke-linecap:round;
+  stroke-dasharray:201; stroke-dashoffset:201;
+  animation: fillBlue 2.2s ease forwards 0.4s;
+}
+.ring-teal {
+  fill:none; stroke:var(--teal); stroke-width:7; stroke-linecap:round;
+  stroke-dasharray:201; stroke-dashoffset:201;
+  animation: fillTeal 2.6s ease forwards 0.6s;
+}
+@keyframes fillBlue { to { stroke-dashoffset: 50; } }
+@keyframes fillTeal { to { stroke-dashoffset: 125; } }
+.ring-num {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.15rem; font-weight:700; color:var(--ink);
+}
+
+/* ── BOTTOM ROW ── */
+.bottom-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+
+/* Mini bar chart */
+.mini-bars {
+  display:flex; align-items:flex-end; gap:3px;
+  height:30px; margin-top:8px;
+}
+.mini-bar {
+  flex:1; border-radius:2px 2px 0 0;
+  background: linear-gradient(to top, var(--accent), var(--teal));
+  opacity: 0.75;
+  transform-origin: bottom; transform: scaleY(0);
+  transition: transform 0.45s ease;
+}
+.mini-bar.show { transform: scaleY(1); }
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- COPY -->
+  <div>
+    <p class="copy-label">Managerial Insights</p>
+    <h2 class="copy-title">Gain control over your contact centre</h2>
+    <p class="copy-sub">Real-time visibility across every channel, agent, and queue.</p>
+    <p class="copy-body">
+      When you can see what's happening across your operation, you can respond intelligently and in real time. Get visibility into performance across channels, agents, and customer journeys — removing friction and adapting instantly to changing conditions.
+    </p>
+    <p class="copy-body">
+      Managers can coach more effectively, resolve issues faster, and elevate the experience for both agents and customers.
+    </p>
+    <a href="#" class="copy-link">Learn more about Managerial Insights →</a>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="dashboard">
+
+    <!-- Agent State -->
+    <div class="card float-a">
+      <div class="card-path">Dashboard / Agent State</div>
+      <div class="card-title"><span class="live-dot"></span> Agent State</div>
+      <table class="agent-table" id="agentTable">
+        <thead>
+          <tr>
+            <th>Full Name</th><th>State</th><th>Reason</th><th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Johnny Cash</td><td><span class="badge b-acw">After Call Work</span></td><td style="color:var(--muted)">—</td><td>27:25</td></tr>
+          <tr><td>Daniel Cartmell</td><td><span class="badge b-notready">Not Ready</span></td><td style="font-size:.62rem;color:var(--muted)">Meeting</td><td>35:45</td></tr>
+          <tr><td>Michael Stockton</td><td><span class="badge b-call">On Call</span></td><td style="color:var(--muted)">—</td><td id="callDur">34:20</td></tr>
+          <tr><td>Willie Nelson</td><td><span class="badge b-notready">Not Ready</span></td><td style="font-size:.62rem;color:var(--muted)">Team Meeting</td><td>1:13:25</td></tr>
+          <tr><td>Danielle O'Keeffe</td><td><span class="badge b-ready">Ready</span></td><td style="color:var(--muted)">—</td><td>1:59:20</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 3 metric cards -->
+    <div class="metrics-row">
+
+      <div class="card ring-card float-b">
+        <div class="metric-label">(Abandon)</div>
+        <div class="ring-wrap">
+          <svg width="72" height="72" viewBox="0 0 72 72">
+            <circle class="ring-track" cx="36" cy="36" r="32"/>
+            <circle class="ring-blue"  cx="36" cy="36" r="32"/>
+          </svg>
+          <div class="ring-num" id="abandonVal">0</div>
+        </div>
+        <div class="metric-sub">Abandoned calls</div>
+      </div>
+
+      <div class="card float-c">
+        <div class="metric-label">Service Level (Queue)</div>
+        <div class="metric-val" style="color:var(--accent)" id="slaVal">0%</div>
+        <div class="metric-sub">JB_OmniChannel</div>
+        <div class="metric-delta" style="color:var(--green)">↑ 4% vs yesterday</div>
+      </div>
+
+      <div class="card ring-card float-d">
+        <div class="metric-label">Not Ready For Calls</div>
+        <div class="ring-wrap">
+          <svg width="72" height="72" viewBox="0 0 72 72">
+            <circle class="ring-track" cx="36" cy="36" r="32"/>
+            <circle class="ring-teal"  cx="36" cy="36" r="32"/>
+          </svg>
+          <div class="ring-num">49</div>
+        </div>
+        <div class="metric-sub">Active agents</div>
+      </div>
+
+    </div>
+
+    <!-- 2 bottom cards -->
+    <div class="bottom-row">
+
+      <div class="card float-e">
+        <div class="metric-label">Longest Queue Time (Voice)</div>
+        <div class="metric-val" style="color:var(--red)">0:28</div>
+        <div class="metric-sub">EW_Queue</div>
+        <div class="metric-delta" style="color:var(--red)">↓ 70%
+          <span style="display:inline-block;width:24px;height:3px;background:var(--red);border-radius:2px;opacity:.5"></span>
+        </div>
+      </div>
+
+      <div class="card float-b">
+        <div class="metric-label">Avg Speed of Answer</div>
+        <div class="metric-val" style="color:var(--green)">0:01</div>
+        <div class="metric-sub">JM_OmniChannel</div>
+        <div class="mini-bars" id="miniBars"></div>
+      </div>
+
+    </div>
+
+  </div><!-- end dashboard -->
+</div>
+
+<script>
+  // Count-up
+  function countUp(el, target, ms, suffix='') {
+    let v=0; const step=target/(ms/16);
+    const t=setInterval(()=>{
+      v=Math.min(v+step,target);
+      el.textContent=Math.round(v)+suffix;
+      if(v>=target)clearInterval(t);
+    },16);
+  }
+  setTimeout(()=>countUp(document.getElementById('abandonVal'),284,2000),400);
+  setTimeout(()=>countUp(document.getElementById('slaVal'),75,1800,'%'),600);
+
+  // Live call timer
+  let secs=34*60+20;
+  setInterval(()=>{
+    secs++;
+    const el=document.getElementById('callDur');
+    if(el) el.textContent=Math.floor(secs/60)+':'+String(secs%60).padStart(2,'0');
+  },1000);
+
+  // Row highlight sweep
+  const rows=document.querySelectorAll('#agentTable tbody tr');
+  let cur=2; rows[cur].classList.add('hl');
+  setInterval(()=>{
+    rows[cur].classList.remove('hl');
+    cur=(cur+1)%rows.length;
+    rows[cur].classList.add('hl');
+  },1800);
+
+  // Badge state cycling
+  const agentBadges=[
+    {row:1,states:[{cls:'b-notready',txt:'Not Ready'},{cls:'b-call',txt:'On Call'},{cls:'b-ready',txt:'Ready'}]},
+    {row:4,states:[{cls:'b-ready',txt:'Ready'},{cls:'b-call',txt:'On Call'},{cls:'b-acw',txt:'After Call Work'}]},
+  ];
+  agentBadges.forEach(b=>{
+    let i=0;
+    setInterval(()=>{
+      i=(i+1)%b.states.length;
+      const badge=rows[b.row].querySelector('.badge');
+      badge.className='badge '+b.states[i].cls;
+      badge.textContent=b.states[i].txt;
+    },3800+Math.random()*1500);
+  });
+
+  // Mini bars
+  const heights=[40,55,48,70,62,58,80,74,85,78,90,82];
+  const barsEl=document.getElementById('miniBars');
+  heights.forEach((h,i)=>{
+    const b=document.createElement('div');
+    b.className='mini-bar';
+    b.style.height=h+'%';
+    b.style.transitionDelay=(i*0.055)+'s';
+    barsEl.appendChild(b);
+  });
+  setTimeout(()=>document.querySelectorAll('.mini-bar').forEach(b=>b.classList.add('show')),350);
+</script>
+</body>
+</html>
