@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Self-Service</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f2f4f7;
+  --card: #ffffff;
+  --ink: #0f1f35;
+  --muted: #6b7a90;
+  --border: #e4e8f0;
+  --blue: #1a52cc;
+  --blue-light: #e8eeff;
+  --green: #22c55e;
+  --sans: 'Inter', sans-serif;
+  --serif: 'Playfair Display', serif;
+}
+
+body {
+  background: var(--bg);
+  font-family: var(--sans);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+}
+
+/* ── LAYOUT ── */
+.section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: center;
+  max-width: 1060px;
+  width: 100%;
+}
+
+/* ── COPY ── */
+.copy-label {
+  font-size: 0.72rem; font-weight: 800;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--blue); margin-bottom: 0.8rem;
+}
+.copy-title {
+  font-size: 0.95rem; font-weight: 700;
+  color: var(--ink); margin-bottom: 1rem;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.copy-body {
+  font-size: 0.88rem; color: var(--muted);
+  line-height: 1.85; margin-bottom: 1rem;
+}
+.copy-body a { color: var(--blue); text-decoration: none; }
+.copy-link {
+  font-size: 0.85rem; color: var(--blue);
+  text-decoration: none; font-weight: 500;
+  transition: opacity 0.2s;
+}
+.copy-link:hover { opacity: 0.7; }
+
+/* ── ILLUSTRATION STAGE ── */
+.stage {
+  position: relative;
+  height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Blue circle backdrop */
+.backdrop {
+  position: absolute;
+  width: 340px; height: 340px;
+  background: var(--blue);
+  border-radius: 50%;
+  right: -20px; top: 50%;
+  transform: translateY(-50%);
+  z-index: 0;
+}
+
+/* AI badge */
+.ai-badge {
+  position: absolute;
+  left: 30px; top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 72px; height: 72px;
+  background: white;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 32px rgba(26,82,204,0.25);
+  font-size: 1.4rem;
+  animation: badgeFloat 4s ease-in-out infinite;
+}
+@keyframes badgeFloat {
+  0%,100% { transform: translateY(-50%) translateX(0); }
+  50%      { transform: translateY(-54%) translateX(3px); }
+}
+.ai-badge-inner {
+  font-size: 1.1rem; font-weight: 800; color: var(--blue);
+  display: flex; align-items: center; gap: 1px;
+}
+.ai-star { font-size: 0.5rem; color: var(--blue); line-height: 1; }
+
+/* ── CHAT WINDOW ── */
+.chat-window {
+  position: absolute;
+  top: 20px; right: 0;
+  width: 240px;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.14);
+  overflow: hidden;
+  z-index: 4;
+  animation: winFloat 5s ease-in-out infinite 0.3s;
+}
+@keyframes winFloat {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+.chat-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.chat-header-title { font-size: 0.78rem; font-weight: 600; color: var(--ink); }
+.chat-header-icons { display: flex; gap: 8px; color: var(--muted); font-size: 0.9rem; cursor: pointer; }
+
+.chat-date {
+  text-align: center;
+  font-size: 0.6rem; color: var(--muted);
+  padding: 8px 0 4px;
+}
+
+.chat-body {
+  padding: 6px 10px 10px;
+  display: flex; flex-direction: column; gap: 8px;
+  min-height: 180px;
+}
+
+/* Messages */
+.msg {
+  max-width: 85%;
+  font-size: 0.7rem; line-height: 1.5;
+  padding: 8px 10px;
+  border-radius: 12px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.msg.show { opacity: 1; transform: translateY(0); }
+
+.msg-user {
+  background: #f0f2f6;
+  color: var(--ink);
+  align-self: flex-start;
+  border-bottom-left-radius: 3px;
+}
+.msg-bot {
+  background: var(--blue);
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 3px;
+}
+.msg-user-2 {
+  background: #f0f2f6;
+  color: var(--ink);
+  align-self: flex-start;
+  border-bottom-left-radius: 3px;
+}
+
+/* Typing indicator */
+.typing {
+  display: flex; align-items: center; gap: 4px;
+  padding: 8px 10px;
+  background: var(--blue);
+  border-radius: 12px; border-bottom-right-radius: 3px;
+  align-self: flex-end;
+  opacity: 0;
+  transition: opacity 0.3s;
+  width: fit-content;
+}
+.typing.show { opacity: 1; }
+.typing span {
+  width: 5px; height: 5px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 50%;
+  animation: typingDot 1.2s ease-in-out infinite;
+}
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingDot {
+  0%,60%,100% { transform: translateY(0); opacity: 0.7; }
+  30%          { transform: translateY(-4px); opacity: 1; }
+}
+
+/* Chat input */
+.chat-input {
+  border-top: 1px solid var(--border);
+  padding: 8px 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.chat-input-field {
+  flex: 1; font-size: 0.68rem; color: var(--muted);
+  background: #f5f6fa; border-radius: 20px;
+  padding: 5px 10px; border: none; outline: none;
+  font-family: var(--sans);
+}
+.chat-send {
+  width: 26px; height: 26px;
+  background: var(--blue); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; border: none;
+  color: white; font-size: 0.7rem;
+  transition: transform 0.2s;
+}
+.chat-send:hover { transform: scale(1.1); }
+
+/* ── CHANNEL TOGGLES ── */
+.toggles {
+  position: absolute;
+  bottom: 40px; left: 10px;
+  z-index: 4;
+  display: flex; flex-direction: column; gap: 8px;
+  animation: toggFloat 4.5s ease-in-out infinite 0.8s;
+}
+@keyframes toggFloat {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+
+.toggle-row {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+  padding: 9px 14px;
+  display: flex; align-items: center; gap: 10px;
+  width: 170px;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+.toggle-row:hover { box-shadow: 0 6px 28px rgba(0,0,0,0.15); }
+
+.toggle-icon {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--blue-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; flex-shrink: 0;
+}
+.toggle-label {
+  font-size: 0.78rem; font-weight: 600; color: var(--ink); flex: 1;
+}
+
+/* Toggle switch */
+.toggle-switch {
+  width: 36px; height: 20px;
+  border-radius: 20px;
+  position: relative; flex-shrink: 0;
+  transition: background 0.3s;
+  cursor: pointer;
+}
+.toggle-switch.on  { background: var(--blue); }
+.toggle-switch.off { background: #d1d5db; }
+.toggle-switch.green { background: var(--green); }
+
+.toggle-knob {
+  position: absolute;
+  top: 2px;
+  width: 16px; height: 16px;
+  background: white;
+  border-radius: 50%;
+  transition: left 0.3s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.toggle-switch.on  .toggle-knob { left: 18px; }
+.toggle-switch.off .toggle-knob { left: 2px; }
+.toggle-switch.green .toggle-knob { left: 18px; }
+
+</style>
+</head>
+<body>
+
+<div class="section">
+
+  <!-- COPY -->
+  <div>
+    <p class="copy-label">Self-Service</p>
+    <p class="copy-title">Be where your customers want you to be</p>
+    <p class="copy-body">
+      Your customers expect fast, intuitive ways to get answers — without getting stuck in loops or repeating information. Create effortless self-service experiences that meet people where they are and help them move forward with confidence.
+    </p>
+    <p class="copy-body">
+      AI Agents and automated workflows handle routine interactions, guide customers through next steps, and seamlessly bring in a human agent when needed. The result? Shorter wait times, higher containment, and more capacity for your team to focus on high-value moments. Customers like <a href="#">Exact Sciences</a> and <a href="#">SumUp</a> are already seeing 45–50% containment and significant cost savings.
+    </p>
+    <a href="#" class="copy-link">Learn More About Our Approach to Self-Service →</a>
+  </div>
+
+  <!-- ILLUSTRATION -->
+  <div class="stage">
+
+    <!-- Blue circle -->
+    <div class="backdrop"></div>
+
+    <!-- AI badge -->
+    <div class="ai-badge">
+      <div class="ai-badge-inner">
+        AI<span class="ai-star">✦</span>
+      </div>
+    </div>
+
+    <!-- Chat window -->
+    <div class="chat-window">
+      <div class="chat-header">
+        <div class="chat-header-title">Digital Assistant</div>
+        <div class="chat-header-icons">⊕ ⋮</div>
+      </div>
+      <div class="chat-date">Fri, 02 January 2026 · 1:24</div>
+      <div class="chat-body" id="chatBody">
+        <!-- messages injected by JS -->
+      </div>
+      <div class="chat-input">
+        <input class="chat-input-field" type="text" placeholder="Type a message…" readonly/>
+        <button class="chat-send">➤</button>
+      </div>
+    </div>
+
+    <!-- Channel toggles -->
+    <div class="toggles">
+      <div class="toggle-row" onclick="toggleChannel(this)">
+        <div class="toggle-icon">📞</div>
+        <div class="toggle-label">Voice</div>
+        <div class="toggle-switch on" id="toggle-voice">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+      <div class="toggle-row" onclick="toggleChannel(this)">
+        <div class="toggle-icon">✉️</div>
+        <div class="toggle-label">Email</div>
+        <div class="toggle-switch on" id="toggle-email">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+      <div class="toggle-row" onclick="toggleChannel(this)">
+        <div class="toggle-icon">💬</div>
+        <div class="toggle-label">Chat</div>
+        <div class="toggle-switch green" id="toggle-chat">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── CHAT ANIMATION SEQUENCE ──
+  const conversation = [
+    { type: 'user',  text: "Hi, I'm checking on my order. It hasn't arrived yet." },
+    { type: 'bot',   text: "Hi Adam 👋 I see your order #45821 was shipped yesterday and is scheduled to arrive tomorrow by 3 PM. Would you like real-time tracking updates?" },
+    { type: 'user2', text: "Yes, that would be great." },
+  ];
+
+  const chatBody = document.getElementById('chatBody');
+
+  function createMsg(type, text) {
+    const el = document.createElement('div');
+    el.className = 'msg ' + (type === 'bot' ? 'msg-bot' : type === 'user2' ? 'msg-user-2' : 'msg-user');
+    el.textContent = text;
+    return el;
+  }
+
+  function createTyping() {
+    const el = document.createElement('div');
+    el.className = 'typing';
+    el.innerHTML = '<span></span><span></span><span></span>';
+    return el;
+  }
+
+  async function delay(ms) {
+    return new Promise(r => setTimeout(r, ms));
+  }
+
+  async function runConversation() {
+    await delay(600);
+
+    for (let i = 0; i < conversation.length; i++) {
+      const item = conversation[i];
+
+      if (item.type === 'bot') {
+        // Show typing indicator first
+        const typing = createTyping();
+        chatBody.appendChild(typing);
+        chatBody.scrollTop = chatBody.scrollHeight;
+        await delay(80);
+        typing.classList.add('show');
+        await delay(1600);
+        typing.remove();
+      }
+
+      const msg = createMsg(item.type, item.text);
+      chatBody.appendChild(msg);
+      chatBody.scrollTop = chatBody.scrollHeight;
+      await delay(60);
+      msg.classList.add('show');
+
+      await delay(i === 1 ? 1800 : 1200);
+    }
+
+    // Loop after a pause
+    await delay(3000);
+    chatBody.innerHTML = '';
+    runConversation();
+  }
+
+  runConversation();
+
+  // ── TOGGLE INTERACTION ──
+  function toggleChannel(row) {
+    const sw = row.querySelector('.toggle-switch');
+    const isOn = sw.classList.contains('on') || sw.classList.contains('green');
+    if (isOn) {
+      sw.className = 'toggle-switch off';
+    } else {
+      // Chat gets green, others get blue
+      const label = row.querySelector('.toggle-label').textContent.trim();
+      sw.className = 'toggle-switch ' + (label === 'Chat' ? 'green' : 'on');
+    }
+  }
+
+  // Auto-toggle Voice off and back on as a demo loop
+  async function demoToggles() {
+    await delay(4000);
+    const voiceSwitch = document.getElementById('toggle-voice');
+    voiceSwitch.className = 'toggle-switch off';
+    await delay(1800);
+    voiceSwitch.className = 'toggle-switch on';
+    await delay(5000);
+    demoToggles();
+  }
+  demoToggles();
+</script>
+
+</body>
+</html>
