@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Five9 — Intelligent CX Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--b:#2A4CF9;--d:#192A52;--c:#DFFC92;--t:#EEF2FF;--m:#C7D2FE;}
+body{font-family:'Inter',-apple-system,sans-serif;background:#f5f7ff;padding:40px 20px;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:960px;margin:0 auto;}
+.hd-block{text-align:center;margin-bottom:32px;}
+.hd-eyebrow{display:inline-flex;align-items:center;gap:7px;background:var(--t);border:1px solid var(--m);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--b);margin-bottom:14px;letter-spacing:.01em;}
+.hd-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--b);animation:hdpulse 1.6s ease-in-out infinite;flex-shrink:0;}
+@keyframes hdpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(1.4)}}
+h1{font-size:30px;font-weight:700;color:var(--d);letter-spacing:-.025em;line-height:1.15;margin-bottom:10px;}
+h2{font-size:20px;font-weight:400;color:#4a5a7a;letter-spacing:-.01em;line-height:1.4;}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start;}
+
+/* panel */
+.panel{border-radius:18px;overflow:hidden;border:1.5px solid var(--m);min-height:490px;position:relative;transition:background .5s;}
+.scene{position:absolute;inset:0;opacity:0;transition:opacity .35s;display:flex;flex-direction:column;pointer-events:none;}
+.scene.on{opacity:1;pointer-events:auto;}
+.wbar{height:28px;display:flex;align-items:center;padding:0 11px;gap:5px;flex-shrink:0;border-bottom:1px solid rgba(42,76,249,.15);}
+.wd{width:7px;height:7px;border-radius:50%;}
+.wlbl{font-size:8.5px;margin-left:4px;font-weight:500;}
+
+/* conversation area */
+.conv-area{flex:1;display:flex;flex-direction:column;gap:7px;padding:11px 12px 8px;overflow:hidden;}
+.msg{padding:7px 11px;border-radius:10px;font-size:10.5px;line-height:1.5;max-width:84%;opacity:0;transition:opacity .3s;}
+.msg-in{background:#f0f2f7;color:#1f2937;align-self:flex-start;border-bottom-left-radius:2px;}
+.msg-agent{background:var(--b);color:#fff;align-self:flex-end;border-bottom-right-radius:2px;}
+.msg-dark-in{background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);align-self:flex-start;border-bottom-left-radius:2px;}
+.msg-dark-agent{background:var(--b);color:#fff;align-self:flex-end;border-bottom-right-radius:2px;}
+.ai-pill{font-size:8px;font-weight:600;background:var(--c);color:var(--d);padding:1px 6px;border-radius:3px;margin-bottom:3px;display:inline-block;}
+.typing{display:flex;gap:3px;align-items:center;padding:7px 11px;border-radius:10px;border-bottom-left-radius:2px;width:fit-content;opacity:0;transition:opacity .3s;align-self:flex-start;}
+.dot{width:5px;height:5px;border-radius:50%;animation:bounce .9s ease-in-out infinite;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
+
+/* metrics strip */
+.mstrip{padding:7px 12px;display:grid;grid-template-columns:1fr 1fr 1fr;flex-shrink:0;border-top:1px solid rgba(42,76,249,.12);}
+.mv{font-size:12px;font-weight:600;text-align:center;display:block;}
+.ml{font-size:7.5px;color:#aaa;text-align:center;margin-top:1px;display:block;}
+
+/* guide cards */
+.gc{background:#fff;border-radius:10px;border:1px solid var(--m);overflow:hidden;opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s;flex-shrink:0;}
+.gc.in{opacity:1;transform:none;}
+.gc-hd{padding:6px 10px;background:var(--t);border-bottom:1px solid var(--m);display:flex;align-items:center;gap:7px;}
+.gc-ic{width:18px;height:18px;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.gc-lbl{font-size:8.5px;font-weight:600;color:var(--d);}
+.gc-bd{padding:7px 10px;}
+.gc-bd p{font-size:8.5px;color:#555;line-height:1.55;}
+.ch{font-size:7.5px;padding:2px 7px;border-radius:4px;}
+.ch-b{background:var(--t);color:var(--d);}
+.ch-c{background:var(--c);color:var(--d);}
+.ch-w{background:var(--b);color:#fff;}
+.kbr{display:flex;gap:7px;padding:3px 0;border-bottom:1px solid var(--t);}
+.kbr:last-child{border-bottom:none;}
+.kbdot{width:5px;height:5px;border-radius:50%;background:var(--b);margin-top:4px;flex-shrink:0;}
+
+/* product cards */
+.cards{display:flex;flex-direction:column;gap:11px;}
+.pcard{border-radius:14px;padding:15px 17px;cursor:pointer;border:1.5px solid #e5e7eb;background:#fff;transition:border-color .2s,transform .2s,box-shadow .2s;text-align:left;font-family:'Inter',-apple-system,sans-serif;width:100%;outline:none;position:relative;}
+.pcard:hover{transform:translateY(-2px);border-color:var(--m);box-shadow:0 4px 16px rgba(42,76,249,.08);}
+.pcard.on{border-color:var(--b);transform:translateY(-2px);box-shadow:0 4px 16px rgba(42,76,249,.12);}
+.pcard:focus-visible{outline:2px solid var(--b);outline-offset:2px;}
+.pip{width:7px;height:7px;border-radius:50%;background:var(--b);position:absolute;top:14px;right:14px;opacity:0;transition:opacity .2s;}
+.pcard.on .pip{opacity:1;}
+.prow{display:flex;align-items:center;gap:11px;}
+.picon{width:38px;height:38px;border-radius:9px;background:var(--t);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ptitle{font-size:13.5px;font-weight:600;color:#1a1a2e;margin-bottom:2px;}
+.psub{font-size:10.5px;color:#666;}
+.exp{max-height:0;overflow:hidden;transition:max-height .38s cubic-bezier(.4,0,.2,1),opacity .28s;opacity:0;}
+.pcard:hover .exp,.pcard.on .exp{max-height:120px;opacity:1;}
+.expdesc{font-size:11px;color:#555;line-height:1.65;margin-top:11px;padding-top:11px;border-top:1px solid #f0f0f0;}
+.expcta{display:inline-flex;align-items:center;gap:4px;margin-top:9px;font-size:11px;font-weight:600;text-decoration:none;border-radius:6px;padding:5px 11px;background:var(--t);color:var(--b);transition:background .15s,color .15s;font-family:'Inter',-apple-system,sans-serif;}
+.expcta:hover{background:var(--b);color:#fff;}
+.arr{transition:transform .2s;}
+.pcard:hover .arr,.pcard.on .arr{transform:translateX(3px);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd-block">
+    <div class="hd-eyebrow">AI-powered contact centre</div>
+    <h1>Discover the all-in-one intelligent CX platform</h1>
+    <h2>Your contact centre just got super intelligent</h2>
+  </div>
+  <div class="layout">
+
+    <!-- ═══════════ PANEL ═══════════ -->
+    <div class="panel" id="panel" style="background:var(--t);">
+
+      <!-- ── S0: Customer self-service ── -->
+      <div class="scene on" id="s0">
+        <div class="wbar" style="background:#fff;">
+          <div class="wd" style="background:#ff5f57;"></div>
+          <div class="wd" style="background:#febc2e;"></div>
+          <div class="wd" style="background:#28c840;"></div>
+          <span class="wlbl" style="color:var(--d);">AI self-service agent — web chat</span>
+          <div style="margin-left:auto;font-size:7.5px;background:var(--c);color:var(--d);padding:1px 8px;border-radius:6px;font-weight:600;">● Live</div>
+        </div>
+        <div style="display:flex;gap:4px;padding:6px 11px 0;background:#fff;border-bottom:1px solid var(--m);flex-shrink:0;">
+          <div style="font-size:8.5px;padding:3px 9px;border-radius:4px 4px 0 0;background:var(--t);color:var(--b);font-weight:600;border:1px solid var(--m);border-bottom:none;">Web chat</div>
+          <div style="font-size:8.5px;padding:3px 9px;color:#aaa;">Voice</div>
+          <div style="font-size:8.5px;padding:3px 9px;color:#aaa;">SMS</div>
+        </div>
+        <div class="conv-area" id="s0conv" style="background:var(--t);"></div>
+        <div class="mstrip" style="background:#fff;">
+          <div><span class="mv" style="color:var(--b);" id="s0t">0:00</span><span class="ml">Handle time</span></div>
+          <div><span class="mv" style="color:var(--d);">82%</span><span class="ml">AI contained</span></div>
+          <div><span class="mv" style="color:var(--b);">4.9★</span><span class="ml">CSAT</span></div>
+        </div>
+      </div>
+
+      <!-- ── S1: Agent empowerment ── -->
+      <div class="scene" id="s1">
+        <div class="wbar" style="background:var(--d);">
+          <div class="wd" style="background:#ff5f57;"></div>
+          <div class="wd" style="background:#febc2e;"></div>
+          <div class="wd" style="background:#28c840;"></div>
+          <span class="wlbl" style="color:rgba(255,255,255,.55);">Agent desktop — omnichannel</span>
+          <div style="margin-left:auto;font-size:7.5px;background:var(--c);color:var(--d);padding:1px 7px;border-radius:6px;font-weight:600;">● Live</div>
+        </div>
+        <div style="display:flex;gap:3px;padding:5px 11px 0;background:var(--d);border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0;">
+          <div style="font-size:8.5px;padding:3px 9px;border-radius:4px 4px 0 0;background:var(--t);color:var(--b);font-weight:600;">Voice</div>
+          <div style="font-size:8.5px;padding:3px 9px;color:rgba(255,255,255,.3);">Chat</div>
+          <div style="font-size:8.5px;padding:3px 9px;color:rgba(255,255,255,.3);">Email</div>
+          <div style="font-size:8.5px;padding:3px 9px;color:rgba(255,255,255,.3);">SMS</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;flex:1;overflow:hidden;min-height:0;">
+          <!-- convo -->
+          <div style="display:flex;flex-direction:column;background:var(--d);border-right:1px solid rgba(255,255,255,.1);">
+            <div style="padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:7px;flex-shrink:0;">
+              <div style="width:22px;height:22px;border-radius:50%;background:var(--b);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;color:#fff;flex-shrink:0;">MJ</div>
+              <div>
+                <div style="font-size:10px;font-weight:600;color:#fff;">Marcus Johnson</div>
+                <div style="font-size:8px;color:rgba(255,255,255,.4);">Gold tier · #48821</div>
+              </div>
+              <div id="s1sent" style="margin-left:auto;font-size:7.5px;padding:2px 7px;border-radius:8px;background:rgba(223,252,146,.18);color:var(--c);font-weight:600;">Neutral</div>
+            </div>
+            <div class="conv-area" id="s1conv"></div>
+            <div style="padding:6px 10px;border-top:1px solid rgba(255,255,255,.1);display:flex;gap:5px;align-items:center;flex-shrink:0;">
+              <div style="flex:1;background:rgba(255,255,255,.07);border-radius:6px;height:22px;font-size:8.5px;color:rgba(255,255,255,.25);padding:0 8px;display:flex;align-items:center;">Use a suggestion →</div>
+              <div style="width:22px;height:22px;border-radius:5px;background:var(--b);display:flex;align-items:center;justify-content:center;">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+              </div>
+            </div>
+          </div>
+          <!-- AI assist -->
+          <div style="display:flex;flex-direction:column;">
+            <div style="padding:7px 10px;background:var(--b);display:flex;align-items:center;gap:6px;flex-shrink:0;">
+              <div style="font-size:7.5px;font-weight:600;background:var(--c);color:var(--d);padding:2px 6px;border-radius:3px;">AI assist</div>
+              <span style="font-size:8.5px;font-weight:600;color:#fff;">Guidance</span>
+              <div style="margin-left:auto;font-size:7.5px;color:var(--c);font-weight:600;">● Live</div>
+            </div>
+            <div id="s1assist" style="flex:1;padding:8px;display:flex;flex-direction:column;gap:7px;overflow:hidden;background:var(--t);">
+              <div class="gc" id="gc0">
+                <div class="gc-hd"><div class="gc-ic"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--b)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div><span class="gc-lbl">Customer context</span></div>
+                <div class="gc-bd"><p>Marcus contacted <strong style="color:var(--d)">3×</strong> this month. Gold tier — <strong style="color:var(--d)">high churn risk.</strong></p><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:5px;"><span class="ch ch-c">Gold tier</span><span class="ch ch-b">3 contacts</span><span class="ch ch-b">Churn risk</span></div></div>
+              </div>
+              <div class="gc" id="gc1">
+                <div class="gc-hd"><div class="gc-ic"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--b)" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><span class="gc-lbl">Suggested response</span></div>
+                <div class="gc-bd"><p style="font-style:italic;color:var(--d);background:#fff;padding:5px 7px;border-radius:6px;border-left:2px solid var(--b);">"I'm really sorry Marcus — let me pull up that tracking right now."</p><div style="display:flex;gap:4px;margin-top:5px;"><span class="ch ch-w">Use this →</span><span class="ch ch-b">Edit first</span></div></div>
+              </div>
+              <div class="gc" id="gc2">
+                <div class="gc-hd"><div class="gc-ic"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--b)" stroke-width="1.8" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div><span class="gc-lbl">Knowledge — 3 matches</span></div>
+                <div class="gc-bd">
+                  <div class="kbr"><div class="kbdot"></div><div><div style="font-size:8.5px;color:#555;line-height:1.4;">Gold tier urgent delivery escalation</div><div style="font-size:7.5px;font-weight:600;color:var(--b);margin-top:1px;">Open →</div></div></div>
+                  <div class="kbr"><div class="kbdot"></div><div><div style="font-size:8.5px;color:#555;line-height:1.4;">Compensation for delays over 5 days</div><div style="font-size:7.5px;font-weight:600;color:var(--b);margin-top:1px;">Open →</div></div></div>
+                  <div class="kbr"><div class="kbdot"></div><div><div style="font-size:8.5px;color:#555;line-height:1.4;">How to issue a goodwill discount code</div><div style="font-size:7.5px;font-weight:600;color:var(--b);margin-top:1px;">Open →</div></div></div>
+                </div>
+              </div>
+              <div class="gc" id="gc3">
+                <div class="gc-hd"><div class="gc-ic"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--b)" stroke-width="1.8" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><span class="gc-lbl">Next best action</span></div>
+                <div class="gc-bd"><p>Offer <strong style="color:var(--d)">£15 goodwill voucher</strong> + priority shipping. Resolves 91% of similar cases.</p><div style="display:flex;gap:4px;margin-top:4px;"><span class="ch ch-w">Apply voucher</span><span class="ch ch-b">Priority ship</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mstrip" style="background:var(--d);border-top:1px solid rgba(255,255,255,.1);">
+          <div><span class="mv" style="color:var(--c);" id="s1t">0:00</span><span class="ml" style="color:rgba(255,255,255,.35);">Handle time</span></div>
+          <div><span class="mv" style="color:var(--c);">Gold</span><span class="ml" style="color:rgba(255,255,255,.35);">Customer tier</span></div>
+          <div><span class="mv" style="color:var(--c);">4.8★</span><span class="ml" style="color:rgba(255,255,255,.35);">Avg CSAT</span></div>
+        </div>
+      </div>
+
+      <!-- ── S2: Experience management ── -->
+      <div class="scene" id="s2">
+        <div class="wbar" style="background:var(--d);">
+          <div class="wd" style="background:#ff5f57;"></div>
+          <div class="wd" style="background:#febc2e;"></div>
+          <div class="wd" style="background:#28c840;"></div>
+          <span class="wlbl" style="color:rgba(255,255,255,.55);">Experience management — analytics</span>
+        </div>
+        <div style="flex:1;padding:11px;background:var(--d);display:flex;flex-direction:column;gap:9px;overflow:hidden;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;" id="s2m"></div>
+          <div style="font-size:8px;font-weight:600;color:var(--c);letter-spacing:.08em;text-transform:uppercase;">Agent performance — this week</div>
+          <div id="s2b" style="display:flex;flex-direction:column;gap:6px;"></div>
+          <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:9px;border:1px solid rgba(255,255,255,.1);">
+            <div style="font-size:8px;font-weight:600;color:var(--c);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;">Top agents</div>
+            <div id="s2l" style="display:flex;flex-direction:column;gap:6px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── S3: Integrations & security ── -->
+      <div class="scene" id="s3">
+        <div class="wbar" style="background:#fff;">
+          <div class="wd" style="background:#ff5f57;"></div>
+          <div class="wd" style="background:#febc2e;"></div>
+          <div class="wd" style="background:#28c840;"></div>
+          <span class="wlbl" style="color:var(--d);">CX marketplace — integrations</span>
+        </div>
+        <div style="flex:1;padding:11px;background:var(--t);display:flex;flex-direction:column;gap:9px;overflow:hidden;">
+          <div style="font-size:8px;font-weight:600;color:var(--d);letter-spacing:.08em;text-transform:uppercase;">Connected integrations</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="s3g"></div>
+          <div style="background:#fff;border-radius:10px;padding:10px;border:1px solid var(--m);">
+            <div style="font-size:8px;font-weight:600;color:var(--d);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;">Security posture</div>
+            <div id="s3s" style="display:flex;flex-direction:column;gap:6px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ CARDS ═══════════ -->
+    <div class="cards">
+      <button class="pcard on" id="c0" onclick="sel(0)" aria-pressed="true">
+        <div class="pip"></div>
+        <div class="prow">
+          <div class="picon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--b)" stroke-width="1.6" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+          <div><div class="ptitle">Customer self-service</div><div class="psub">AI agents across every channel</div></div>
+        </div>
+        <div class="exp">
+          <p class="expdesc">Resolve queries instantly with AI-powered voice, chat, and digital agents — available 24/7, with seamless handoff to a live agent when needed.</p>
+          <a href="#" class="expcta">Explore self-service <span class="arr">→</span></a>
+        </div>
+      </button>
+      <button class="pcard" id="c1" onclick="sel(1)" aria-pressed="false">
+        <div class="pip"></div>
+        <div class="prow">
+          <div class="picon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--b)" stroke-width="1.6" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+          <div><div class="ptitle">Agent empowerment</div><div class="psub">AI assist, guidance &amp; context</div></div>
+        </div>
+        <div class="exp">
+          <p class="expdesc">Give every agent real-time AI guidance cards, suggested responses, and surfaced knowledge — less time searching, more time resolving.</p>
+          <a href="#" class="expcta">Explore agent empowerment <span class="arr">→</span></a>
+        </div>
+      </button>
+      <button class="pcard" id="c2" onclick="sel(2)" aria-pressed="false">
+        <div class="pip"></div>
+        <div class="prow">
+          <div class="picon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--b)" stroke-width="1.6" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+          <div><div class="ptitle">Experience management</div><div class="psub">WFM, analytics &amp; optimisation</div></div>
+        </div>
+        <div class="exp">
+          <p class="expdesc">Optimise every interaction with workforce management, real-time AI analytics, quality monitoring, and coaching tools that keep your team at its best.</p>
+          <a href="#" class="expcta">Explore experience management <span class="arr">→</span></a>
+        </div>
+      </button>
+      <button class="pcard" id="c3" onclick="sel(3)" aria-pressed="false">
+        <div class="pip"></div>
+        <div class="prow">
+          <div class="picon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--b)" stroke-width="1.6" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+          <div><div class="ptitle">Integrations &amp; security</div><div class="psub">Open platform, global scale</div></div>
+        </div>
+        <div class="exp">
+          <p class="expdesc">Connect Five9 via 300+ pre-built integrations and open APIs — backed by enterprise-grade security and a 99.999% uptime SLA.</p>
+          <a href="#" class="expcta">Explore integrations <span class="arr">→</span></a>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+var BLUE='#2A4CF9', DARK='#192A52', CIT='#DFFC92', TINT='#EEF2FF';
+var panelBg=[TINT, DARK, DARK, TINT];
+var cur=0, pending=[], loopId=null, tickId=null;
+
+function clearAll() {
+  for (var i=0; i<pending.length; i++) clearTimeout(pending[i]);
+  pending=[];
+  if (loopId) { clearTimeout(loopId); loopId=null; }
+  if (tickId) { clearTimeout(tickId); tickId=null; }
+}
+function wait(fn, ms) { var id=setTimeout(fn,ms); pending.push(id); }
+function fmt(s) { var m=Math.floor(s/60),sc=s%60; return m+':'+(sc<10?'0':'')+sc; }
+
+function sel(i) {
+  if (i===cur) return;
+  clearAll();
+  document.getElementById('c'+cur).classList.remove('on');
+  document.getElementById('c'+cur).setAttribute('aria-pressed','false');
+  document.getElementById('s'+cur).classList.remove('on');
+  cur=i;
+  document.getElementById('c'+i).classList.add('on');
+  document.getElementById('c'+i).setAttribute('aria-pressed','true');
+  document.getElementById('s'+i).classList.add('on');
+  document.getElementById('panel').style.background=panelBg[i];
+  [run0,run1,run2,run3][i]();
+}
+
+/* helper: make a chat bubble */
+function makeBubble(cls, text, hasAIPill) {
+  var b=document.createElement('div');
+  b.className='msg '+cls;
+  b.style.opacity='0';
+  if (hasAIPill) {
+    var pill=document.createElement('div');
+    pill.className='ai-pill';
+    pill.textContent='AI agent';
+    b.appendChild(pill);
+    b.appendChild(document.createElement('br'));
+  }
+  b.appendChild(document.createTextNode(text));
+  return b;
+}
+/* helper: make typing indicator */
+function makeTyping(dotColor, bgColor) {
+  var w=document.createElement('div');
+  w.className='typing';
+  w.style.background=bgColor||'rgba(42,76,249,0.1)';
+  w.style.opacity='0';
+  for (var i=0;i<3;i++) {
+    var d=document.createElement('div');
+    d.className='dot';
+    d.style.background=dotColor||BLUE;
+    d.style.animationDelay=(i*0.18)+'s';
+    w.appendChild(d);
+  }
+  return w;
+}
+/* helper: append el and fade in */
+function append(container, el, delay) {
+  wait(function(){ 
+    var old=container.querySelector('.typing');
+    if (old) container.removeChild(old);
+    container.appendChild(el);
+    setTimeout(function(){ el.style.opacity='1'; }, 40);
+    container.scrollTop=container.scrollHeight;
+  }, delay);
+}
+
+/* ════════════════════════════════════════
+   SCENE 0 — Customer self-service chatbot
+   ════════════════════════════════════════ */
+var conv0=[
+  {type:'in',  text:'Hi, I need to reset my account password.',                     t:600},
+  {type:'ty',  t:1400},
+  {type:'ai',  text:'Happy to help. Can you confirm your registered email address?', t:2300},
+  {type:'in',  text:"It's sarah@acme.com",                                           t:3500},
+  {type:'ty',  t:4200},
+  {type:'ai',  text:"Thanks Sarah — I've sent a secure reset link. Expires in 15 minutes.", t:5100},
+  {type:'in',  text:'Perfect, got it. Thank you!',                                   t:6200},
+  {type:'ty',  t:6900},
+  {type:'ai',  text:'All set! Is there anything else I can help with today?',        t:7800},
+];
+function run0() {
+  var area=document.getElementById('s0conv');
+  var te=document.getElementById('s0t');
+  area.innerHTML=''; te.textContent='0:00';
+  var sec=0;
+  function tick() { sec++; te.textContent=fmt(sec); tickId=setTimeout(tick,1000); }
+  tickId=setTimeout(tick,1000);
+  for (var i=0; i<conv0.length; i++) {
+    (function(item){
+      if (item.type==='ty') {
+        var w=makeTyping(BLUE,'rgba(42,76,249,0.1)');
+        append(area, w, item.t);
+      } else {
+        var b=makeBubble(item.type==='ai'?'msg-agent':'msg-in', item.text, item.type==='ai');
+        append(area, b, item.t);
+      }
+    })(conv0[i]);
+  }
+  loopId=setTimeout(function(){ if(cur===0) run0(); }, 11500);
+}
+
+/* ════════════════════════════════════════
+   SCENE 1 — Agent empowerment
+   ════════════════════════════════════════ */
+var conv1=[
+  {type:'in',  text:"My order still hasn't arrived — it's been 8 days.",             t:500},
+  {type:'ty',  t:1300},
+  {type:'ag',  text:"I'm really sorry Marcus — let me pull up that tracking right now.", t:2200},
+  {type:'in',  text:"I've been waiting all week, this is really frustrating.",        t:3700},
+  {type:'ty',  t:4500},
+  {type:'ag',  text:"I completely understand. I'm escalating to priority and adding a £15 goodwill voucher.", t:5400},
+  {type:'in',  text:'Thank you, that is really appreciated.',                         t:7100},
+  {type:'ty',  t:7900},
+  {type:'ag',  text:'Done — voucher sent to your email and order on priority dispatch.', t:8800},
+];
+var sents=[
+  {t:0,    label:'Neutral',    bg:'rgba(223,252,146,.18)', col:CIT},
+  {t:3700, label:'Frustrated', bg:'rgba(239,68,68,.22)',   col:'#fca5a5'},
+  {t:7100, label:'Satisfied',  bg:'rgba(223,252,146,.18)', col:CIT},
+];
+var gcTimes=[0, 2200, 4300, 5600];
+
+function run1() {
+  var area=document.getElementById('s1conv');
+  var te=document.getElementById('s1t');
+  var se=document.getElementById('s1sent');
+  var gcs=[
+    document.getElementById('gc0'),
+    document.getElementById('gc1'),
+    document.getElementById('gc2'),
+    document.getElementById('gc3')
+  ];
+  area.innerHTML=''; te.textContent='0:00';
+  for (var i=0;i<gcs.length;i++) gcs[i].classList.remove('in');
+
+  var sec=0;
+  function tick() { sec++; te.textContent=fmt(sec); tickId=setTimeout(tick,1000); }
+  tickId=setTimeout(tick,1000);
+
+  /* sentiment shifts */
+  for (var si=0;si<sents.length;si++) {
+    (function(s){
+      wait(function(){
+        se.textContent=s.label;
+        se.style.background=s.bg;
+        se.style.color=s.col;
+      }, s.t);
+    })(sents[si]);
+  }
+
+  /* guide cards slide in */
+  for (var gi=0;gi<gcTimes.length;gi++) {
+    (function(idx, ms){
+      wait(function(){ gcs[idx].classList.add('in'); }, ms);
+    })(gi, gcTimes[gi]);
+  }
+
+  /* conversation messages */
+  for (var mi=0;mi<conv1.length;mi++) {
+    (function(item){
+      if (item.type==='ty') {
+        var w=makeTyping('rgba(255,255,255,.4)','rgba(255,255,255,.08)');
+        append(area, w, item.t);
+      } else {
+        var cls=item.type==='ag'?'msg-dark-agent':'msg-dark-in';
+        var b=makeBubble(cls, item.text, false);
+        append(area, b, item.t);
+      }
+    })(conv1[mi]);
+  }
+  loopId=setTimeout(function(){ if(cur===1) run1(); }, 13000);
+}
+
+/* ════════════════════════════════════════
+   SCENE 2 — Experience management
+   ════════════════════════════════════════ */
+var metrics2=[
+  {v:'96%',  l:'Adherence'},
+  {v:'4.7★', l:'CSAT avg'},
+  {v:'82%',  l:'AI contained'},
+];
+var shifts2=[['AM Team',88],['PM Team',72],['Night',45]];
+var agents2=[
+  {init:'JM', name:'Jamie M.', pts:980},
+  {init:'SR', name:'Sam R.',   pts:764},
+  {init:'AL', name:'Alex L.',  pts:598},
+];
+function run2() {
+  var met=document.getElementById('s2m');
+  var bars=document.getElementById('s2b');
+  var lb=document.getElementById('s2l');
+  met.innerHTML=''; bars.innerHTML=''; lb.innerHTML='';
+
+  for (var i=0;i<metrics2.length;i++) {
+    (function(m,i){
+      wait(function(){
+        var d=document.createElement('div');
+        d.style.cssText='background:rgba(255,255,255,.07);border-radius:8px;padding:8px;text-align:center;border:1px solid rgba(255,255,255,.1);opacity:0;transition:opacity .4s;';
+        d.innerHTML='<div style="font-size:15px;font-weight:600;color:'+CIT+';">'+m.v+'</div>'
+                   +'<div style="font-size:7.5px;color:rgba(255,255,255,.4);margin-top:2px;">'+m.l+'</div>';
+        met.appendChild(d);
+        setTimeout(function(){ d.style.opacity='1'; },40);
+      }, i*170);
+    })(metrics2[i],i);
+  }
+
+  for (var i=0;i<shifts2.length;i++) {
+    (function(sh,i){
+      wait(function(){
+        var r=document.createElement('div');
+        r.style.cssText='display:flex;align-items:center;gap:6px;opacity:0;transition:opacity .4s;';
+        var fill=document.createElement('div');
+        fill.style.cssText='height:100%;background:'+BLUE+';border-radius:3px;width:0%;transition:width .9s ease;';
+        var track=document.createElement('div');
+        track.style.cssText='flex:1;height:6px;background:rgba(255,255,255,.09);border-radius:3px;overflow:hidden;';
+        track.appendChild(fill);
+        r.innerHTML='<span style="font-size:8.5px;font-weight:500;color:rgba(255,255,255,.55);width:44px;">'+sh[0]+'</span>';
+        r.appendChild(track);
+        var pctSpan=document.createElement('span');
+        pctSpan.style.cssText='font-size:8.5px;color:rgba(255,255,255,.4);width:24px;';
+        pctSpan.textContent=sh[1]+'%';
+        r.appendChild(pctSpan);
+        bars.appendChild(r);
+        setTimeout(function(){
+          r.style.opacity='1';
+          setTimeout(function(){ fill.style.width=sh[1]+'%'; }, 60);
+        },40);
+      }, 420+i*240);
+    })(shifts2[i],i);
+  }
+
+  for (var i=0;i<agents2.length;i++) {
+    (function(ag,rank){
+      wait(function(){
+        var r=document.createElement('div');
+        r.style.cssText='display:flex;align-items:center;gap:7px;opacity:0;transition:opacity .4s;';
+        r.innerHTML='<span style="font-size:9px;color:rgba(255,255,255,.3);width:10px;">'+rank+'</span>'
+          +'<div style="width:18px;height:18px;border-radius:50%;background:'+BLUE+';display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:600;color:#fff;flex-shrink:0;">'+ag.init+'</div>'
+          +'<span style="font-size:9px;color:rgba(255,255,255,.75);flex:1;">'+ag.name+'</span>'
+          +'<span style="font-size:9px;font-weight:600;color:'+CIT+';">'+ag.pts+'</span>';
+        lb.appendChild(r);
+        setTimeout(function(){ r.style.opacity='1'; },40);
+      }, 1700+rank*240);
+    })(agents2[i], i+1);
+  }
+  loopId=setTimeout(function(){ if(cur===2) run2(); }, 8500);
+}
+
+/* ════════════════════════════════════════
+   SCENE 3 — Integrations & security
+   ════════════════════════════════════════ */
+var ints3=[
+  {n:'Salesforce',     p:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z'},
+  {n:'Microsoft Teams',p:'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 7a4 4 0 100 8 4 4 0 000-8z'},
+  {n:'ServiceNow',     p:'M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18'},
+  {n:'AWS Connect',    p:'M18 20V10M12 20V4M6 20v-6'},
+];
+var sec3=[
+  {l:'Encryption at rest',s:'Active'},
+  {l:'PCI-DSS',           s:'Certified'},
+  {l:'GDPR',              s:'Compliant'},
+  {l:'99.999% SLA',       s:'Met'},
+];
+function run3() {
+  var grid=document.getElementById('s3g');
+  var sec=document.getElementById('s3s');
+  grid.innerHTML=''; sec.innerHTML='';
+
+  for (var i=0;i<ints3.length;i++) {
+    (function(it,i){
+      wait(function(){
+        var d=document.createElement('div');
+        d.style.cssText='background:#fff;border-radius:9px;padding:9px;border:1px solid '+TINT+';display:flex;align-items:center;gap:8px;opacity:0;transition:opacity .4s;';
+        d.innerHTML='<div style="width:24px;height:24px;border-radius:5px;background:'+TINT+';display:flex;align-items:center;justify-content:center;flex-shrink:0;">'
+          +'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="'+BLUE+'" stroke-width="1.6" stroke-linecap="round"><path d="'+it.p+'"/></svg></div>'
+          +'<div><div style="font-size:9.5px;font-weight:600;color:'+DARK+';">'+it.n+'</div>'
+          +'<div style="font-size:8px;color:'+BLUE+';display:flex;align-items:center;gap:3px;margin-top:2px;">'
+          +'<div style="width:5px;height:5px;border-radius:50%;background:'+BLUE+';"></div>Connected</div></div>';
+        grid.appendChild(d);
+        setTimeout(function(){ d.style.opacity='1'; },40);
+      }, i*160);
+    })(ints3[i],i);
+  }
+
+  for (var i=0;i<sec3.length;i++) {
+    (function(row,i){
+      wait(function(){
+        var el=document.createElement('div');
+        el.style.cssText='display:flex;align-items:center;justify-content:space-between;opacity:0;transition:opacity .4s;';
+        el.innerHTML='<span style="font-size:9.5px;color:#444;">'+row.l+'</span>'
+          +'<span style="font-size:8px;font-weight:600;padding:2px 8px;border-radius:5px;background:'+TINT+';color:'+BLUE+';">'+row.s+'</span>';
+        sec.appendChild(el);
+        setTimeout(function(){ el.style.opacity='1'; },40);
+      }, 700+i*140);
+    })(sec3[i],i);
+  }
+  loopId=setTimeout(function(){ if(cur===3) run3(); }, 9000);
+}
+
+/* kick off */
+run0();
+</script>
+</body>
+</html>
